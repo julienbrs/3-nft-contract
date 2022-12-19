@@ -18,6 +18,8 @@ const networkConfig = {
         interval: "5",
         linkAdress: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
         mintFee: "10000000000000000", // = 0.01 ETH
+        ethUsdPriceFeed: "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e",
+        waitConfirmations: "3",
     },
     137: {
         name: "polygon",
