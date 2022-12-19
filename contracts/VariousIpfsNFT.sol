@@ -78,6 +78,7 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE;
 
         Breed dogBreed = getBreedFromModdedRng(moddedRng);
+        s_tokenCounter++;
         _safeMint(dogOwner, newTokenId);
         // _setTokenURI isn't the best for gas efficiency
         _setTokenURI(newTokenId, s_dogsTokenUris[uint256(dogBreed)]);
