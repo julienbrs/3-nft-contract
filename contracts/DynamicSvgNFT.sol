@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "base64-sol/base64.sol";
 
+error ERC721Metadata__URI_QueryFor_NonExistentToken();
+
 contract DynamicSvgNFT is ERC721 {
     uint256 private s_tokenCounter;
     string private i_lowImageURI;
@@ -34,8 +36,8 @@ contract DynamicSvgNFT is ERC721 {
 
     function mintNft(int256 highValue) public {
         s_tokenIdToHighValue[s_tokenCounter] = highValue;
-        s_tokenCounter++;
         _safeMint(msg.sender, s_tokenCounter);
+        s_tokenCounter++;
         emit CreatedNFT(s_tokenCounter, highValue);
     }
 
@@ -44,8 +46,9 @@ contract DynamicSvgNFT is ERC721 {
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "Uri Query for nonexistent token");
-
+        if (!_exists(tokenId)) {
+            revert ERC721Metadata__URI_QueryFor_NonExistentToken();
+        }
         (, int256 price, , , ) = i_priceFeed.latestRoundData();
         string memory imageURI = i_lowImageURI;
         if (price >= s_tokenIdToHighValue[tokenId]) {

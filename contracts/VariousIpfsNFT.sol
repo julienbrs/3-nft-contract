@@ -121,6 +121,4 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     function getTokenCounter() public view returns (uint256) {
         return s_tokenCounter;
     }
-
-    function tokenURI(uint256) public view override returns (string memory) {}
 }
