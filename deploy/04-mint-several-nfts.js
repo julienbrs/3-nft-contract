@@ -37,3 +37,5 @@ module.exports = async function ({ getNamedAccounts }) {
     })
     console.log(`tokenURI of variousIpfsNft index 0 is ${await variousIpfsNft.getDogTokenUris(0)}`)
 }
+
+module.exports.tags = ["all", "mint"]

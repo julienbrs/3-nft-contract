@@ -22,4 +22,5 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     log("===========")
 }
 
+// main tag will just deploy contracts without minting anything
 module.exports.tags = ["all", "simplestNFT", "main"]
