@@ -22,15 +22,15 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     uint256 internal immutable i_mintFee;
 
     // Type Declaration
-    enum Breed {
-        PUG,
-        SHIBA_INU,
-        ST_BERNARD
+    enum Type {
+        ETHEREAL,
+        ELECTRIC,
+        HYPNOTIC
     }
 
     // Events
     event NftRequested(uint256 indexed requestId, address requester);
-    event NftMinted(Breed dogBreed, address minter);
+    event NftMinted(Type gradientType, address minter);
 
     // VRF Helpers
     mapping(uint256 => address) public s_requestIdToSender;
@@ -38,14 +38,14 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // NFT Variables
     uint256 public s_tokenCounter;
     uint256 internal constant MAX_CHANCE_VALUE = 100;
-    string[3] internal s_dogsTokenUris;
+    string[13] internal s_typeTokenURIS;
 
     constructor(
         address vrfCoordinatorV2,
         uint64 subscriptionId,
         bytes32 gasLane,
         uint32 callbackGasLimit,
-        string[3] memory dogsTokenUris,
+        string[13] memory typeTokenURIS,
         uint256 mintFee
     ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("Various Ipfs NFT", "VIN") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
@@ -53,7 +53,7 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         i_gasLane = gasLane;
         i_callbackGasLimit = callbackGasLimit;
         i_mintFee = mintFee;
-        s_dogsTokenUris = dogsTokenUris;
+        s_typeTokenURIS = typeTokenURIS;
     }
 
     function requestNFT() public payable returns (uint256 requestId) {
@@ -73,16 +73,16 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     }
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
-        address dogOwner = s_requestIdToSender[requestId];
+        address gradOwner = s_requestIdToSender[requestId];
         uint256 newTokenId = s_tokenCounter;
         uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE;
 
-        Breed dogBreed = getBreedFromModdedRng(moddedRng);
+        Type gradientType = getTypeFromModdedRng(moddedRng);
         s_tokenCounter++;
-        _safeMint(dogOwner, newTokenId);
+        _safeMint(gradOwner, newTokenId);
         // _setTokenURI isn't the best for gas efficiency
-        _setTokenURI(newTokenId, s_dogsTokenUris[uint256(dogBreed)]);
-        emit NftMinted(dogBreed, dogOwner);
+        _setTokenURI(newTokenId, s_typeTokenURIS[uint256(gradientType)]);
+        emit NftMinted(gradientType, gradOwner);
     }
 
     function withdraw() public onlyOwner {
@@ -93,16 +93,16 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         }
     }
 
-    function getBreedFromModdedRng(uint256 moddedRng) public pure returns (Breed) {
+    function getTypeFromModdedRng(uint256 moddedRng) public pure returns (Type) {
         uint256 cumulativeSum = 0;
         uint256[3] memory chanceArray = getChanceArray();
         for (uint256 i = 0; i < chanceArray.length; i++) {
             if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
-                return Breed(i);
+                return Type(i);
             }
             cumulativeSum += chanceArray[i];
         }
-        // If something weird happens and we don't return Breed, we revert
+        // If something weird happens and we don't return Type, we revert
         revert VariousIpfsNFT__RangeOutOfBounds();
     }
 
@@ -114,8 +114,8 @@ contract VariousIpfsNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         return i_mintFee;
     }
 
-    function getDogTokenUris(uint256 index) public view returns (string memory) {
-        return s_dogsTokenUris[index];
+    function getGradientTokenUris(uint256 index) public view returns (string memory) {
+        return s_typeTokenURIS[index];
     }
 
     function getTokenCounter() public view returns (uint256) {

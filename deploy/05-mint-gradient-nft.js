@@ -5,22 +5,9 @@ module.exports = async function ({ getNamedAccounts }) {
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
 
-    // Simplest NFT
-    const simplestNft = await ethers.getContract("SimplestNFT", deployer)
-    const simplestNftMintTx = await simplestNft.mintNft()
-    await simplestNftMintTx.wait(1)
-    console.log(`tokenURI of simplestNFT index 0 is ${await simplestNft.getTokenURI()}`)
-
-    // Dynamic svg
-    const highValue = ethers.utils.parseEther("1000")
-    const dynamicSvgNft = await ethers.getContract("DynamicSvgNFT", deployer)
-    const dynamicSvgNftTx = await dynamicSvgNft.mintNft(highValue)
-    await dynamicSvgNftTx.wait(1)
-    console.log(`tokenURI of dynamicSvgNft index 0 is ${await dynamicSvgNft.tokenURI(0)}`)
-
-    // various IPFS NFT
     const variousIpfsNft = await ethers.getContract("VariousIpfsNFT", deployer)
     const mintFee = await variousIpfsNft.getMintFee()
+    console.log("Setting up listener...")
     //setup a listener:
     await new Promise(async (resolve, reject) => {
         setTimeout(resolve, 600000) // 10 minutes
@@ -40,4 +27,4 @@ module.exports = async function ({ getNamedAccounts }) {
     )
 }
 
-module.exports.tags = ["all", "mint"]
+module.exports.tags = ["all", "mint-gradient"]
